@@ -16,7 +16,7 @@ to alter the library's behaviour to their specific needs.
 <dependency>
   <groupId>com.github.aparx</groupId>
   <artifactId>bufig-library</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>VERSION</version>
 </dependency>
 ```
 ## Requirements
