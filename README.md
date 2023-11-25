@@ -40,7 +40,7 @@ to alter the library's behaviour to their specific needs.
       "    Our main configuration    ",
       "<============================>"
   })
-  private static class MainConfig extends ConfigObject {
+  public static class MainConfig extends ConfigObject {
 
     @ConfigMapping
     @Document("The primary prefix of our example plugin")
