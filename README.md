@@ -3,6 +3,8 @@ Advanced Bukkit configuration wrapper. Providing a way to easily integrate confi
 nested documentation, custom serialization and much more. Built with modularity in mind, which gives users the ability 
 to alter the library's behaviour to their specific needs.
 
+> A wiki will follow in the future.
+
 ## Installation
 [![](https://jitpack.io/v/aparx/bufig-library.svg)](https://jitpack.io/#aparx/bufig-library)
 
