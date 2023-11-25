@@ -4,7 +4,7 @@ nested documentation, custom serialization and much more. Built with modularity 
 to alter the library's behaviour to their specific needs.
 
 ## Installation
-[![](https://jitpack.io/v/aparx/bufig.svg)](https://jitpack.io/#aparx/bufig)
+[![](https://jitpack.io/v/aparx/bufig-library.svg)](https://jitpack.io/#aparx/bufig-library)
 
 ```xml
 <repositories>
