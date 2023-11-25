@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Class representing a specific location within a configuration, determined by an array of
+ * Class representing a specific location within a configuration, determined by an
+ * array of
  * segments defining the final path (delimited by an external separator).
  * <p>Every segment of a path is ensured to not be null and not blank.
  * <p>A string path can be parsed into a {@code ConfigPath} through the
