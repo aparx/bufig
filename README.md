@@ -28,6 +28,7 @@ to alter the library's behaviour to their specific needs.
 ```java
   @Override
   public void onEnable() {
+    // Refer to `ConfigHandlers` to create different types of handlers
     ConfigHandler<? super YamlConfig> handler = ConfigHandler.of(this);
     MainConfig mainConfig = new MainConfig(handler);
     mainConfig.load();
