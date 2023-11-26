@@ -8,6 +8,8 @@ import lombok.experimental.Accessors;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Objects;
+
 /**
  * @author aparx (Vinzent Z.)
  * @version 2023-11-21 12:26
@@ -37,6 +39,21 @@ public class YamlCommentLine extends ScannedLine {
     return "YamlCommentLine{" +
         "nestDepth=" + nestDepth +
         ", content='" + content + '\'' +
+        ", line='" + getLine() + '\'' +
         '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof YamlCommentLine)) return false;
+    if (!super.equals(o)) return false;
+    YamlCommentLine that = (YamlCommentLine) o;
+    return nestDepth == that.nestDepth && Objects.equals(content, that.content);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), nestDepth, content);
   }
 }

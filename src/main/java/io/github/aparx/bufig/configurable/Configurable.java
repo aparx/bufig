@@ -1,6 +1,8 @@
 package io.github.aparx.bufig.configurable;
 
+import io.github.aparx.bufig.ConfigPath;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.dataflow.qual.Deterministic;
 
 /**
  * @author aparx (Vinzent Z.)

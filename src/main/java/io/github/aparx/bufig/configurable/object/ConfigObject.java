@@ -82,7 +82,7 @@ public class ConfigObject extends ConfigProxy implements Configurable {
   }
 
   @Override
-  public final @NonNull String getId() {
+  public @NonNull String getId() {
     return configId == null ? super.getId() : configId;
   }
 

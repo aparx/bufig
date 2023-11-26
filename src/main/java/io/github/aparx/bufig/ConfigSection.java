@@ -1,12 +1,18 @@
 package io.github.aparx.bufig;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import org.bukkit.Color;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfigurationOptions;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.dataflow.qual.Deterministic;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -104,5 +110,99 @@ public interface ConfigSection {
   default boolean isRoot() {
     return getRoot() == this;
   }
+
+  // BEGIN RETRIEVERS (since 1.0)
+
+  /** @since 1.0 */
+  Set<String> getKeys(boolean deep);
+
+  /** @since 1.0 */
+  Map<String, Object> getValues(boolean deep);
+
+  /** @since 1.0 */
+  String getString(String path);
+
+  /** @since 1.0 */
+  String getString(String path, String def);
+
+  /** @since 1.0 */
+  boolean isString(String path);
+
+  /** @since 1.0 */
+  int getInt(@NonNull String path);
+
+  /** @since 1.0 */
+  int getInt(@NonNull String path, int def);
+
+  /** @since 1.0 */
+  boolean isInt(String path);
+
+  /** @since 1.0 */
+  double getDouble(@NonNull String path);
+
+  /** @since 1.0 */
+  double getDouble(@NonNull String path, double def);
+
+  /** @since 1.0 */
+  boolean isDouble(String path);
+
+  /** @since 1.0 */
+  long getLong(@NonNull String path);
+
+  /** @since 1.0 */
+  long getLong(@NonNull String path, long def);
+
+  /** @since 1.0 */
+  boolean isLong(String path);
+
+  /** @since 1.0 */
+  boolean getBoolean(String path);
+
+  /** @since 1.0 */
+  boolean getBoolean(String path, boolean def);
+
+  /** @since 1.0 */
+  boolean isBoolean(String path);
+
+  /** @since 1.0 */
+  List<?> getList(String path);
+
+  /** @since 1.0 */
+  List<?> getList(String path, List<?> def);
+
+  /** @since 1.0 */
+  boolean isList(String path);
+
+  /** @since 1.0 */
+  List<Map<?, ?>> getMapList(String path);
+
+  /** @since 1.0 */
+  Color getColor(String path);
+
+  /** @since 1.0 */
+  Color getColor(String path, Color def);
+
+  /** @since 1.0 */
+  boolean isColor(String path);
+
+  /** @since 1.0 */
+  ItemStack getItemStack(String path);
+
+  /** @since 1.0 */
+  ItemStack getItemStack(String path, ItemStack def);
+
+  /** @since 1.0 */
+  boolean isItemStack(String path);
+
+  /** @since 1.0 */
+  Vector getVector(String path);
+
+  /** @since 1.0 */
+  Vector getVector(String path, Vector def);
+
+  /** @since 1.0 */
+  boolean isVector(String path);
+
+  // END RETRIEVERS
 
 }

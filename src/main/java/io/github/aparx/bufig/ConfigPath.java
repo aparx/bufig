@@ -12,6 +12,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Vector;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,16 +46,11 @@ public final class ConfigPath implements Iterable<@NonNull String> {
 
   private final @NonNull String @NonNull [] segments;
 
+  /** Internal string caching the join using the default separator */
+  private String defaultSeparatorJoin;
+
   public static boolean isValidSegment(String segment) {
     return StringUtils.isNotBlank(segment);
-  }
-
-  public static boolean isEmpty(ConfigPath path) {
-    return path == null || path.isEmpty();
-  }
-
-  public static boolean isNotEmpty(ConfigPath path) {
-    return path != null && !path.isEmpty();
   }
 
   public static ConfigPath of(String @NonNull [] segments) {
@@ -93,10 +89,34 @@ public final class ConfigPath implements Iterable<@NonNull String> {
    * @see String#split(String)
    */
   public static ConfigPath parse(String path, char pathSeparator) {
-    // TODO replace (regex) split with a custom more performant alternative
-    return of(path.split(pathSeparator != DEFAULT_SEPARATOR
-        ? Pattern.quote(String.valueOf(pathSeparator))
-        : QUOTED_DEFAULT_SEPARATOR));
+    if (path.isEmpty())
+      return EMPTY;
+    int index = path.indexOf(pathSeparator);
+    if (index == -1)
+      return of(path);
+    Vector<String> vector = new Vector<>();
+    do {
+      String segment = path.substring(0, index);
+      if (isValidSegment(segment)) vector.add(segment);
+      path = path.substring(1 + index);
+    } while ((index = path.indexOf(pathSeparator)) != -1);
+    if (isValidSegment(path)) vector.add(path);
+    else if (vector.isEmpty()) return EMPTY;
+    //noinspection ToArrayCallWithZeroLengthArrayArgument
+    return new ConfigPath(vector.toArray(new String[vector.size()]));
+  }
+
+
+  /** @deprecated Use ConfigPaths#isEmpty instead. */
+  @Deprecated(forRemoval = true)
+  public static boolean isEmpty(ConfigPath path) {
+    return ConfigPaths.isEmpty(path);
+  }
+
+  /** @deprecated Use ConfigPaths#isNotEmpty instead. */
+  @Deprecated(forRemoval = true)
+  public static boolean isNotEmpty(ConfigPath path) {
+    return ConfigPaths.isNotEmpty(path);
   }
 
   public int length() {
@@ -118,7 +138,13 @@ public final class ConfigPath implements Iterable<@NonNull String> {
    * @see #parseAdd(String, char)
    */
   public String join(char pathSeparator) {
-    return stream().collect(Collectors.joining(String.valueOf(pathSeparator)));
+    final int n = length();
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < n; ++i) {
+      if (i != 0) builder.append(pathSeparator);
+      builder.append(Objects.requireNonNull(segments[i]));
+    }
+    return builder.toString();
   }
 
   public String join() {
@@ -152,14 +178,14 @@ public final class ConfigPath implements Iterable<@NonNull String> {
   public @NonNull ConfigPath add(@NonNull ConfigPath other) {
     if (other.isEmpty()) return this;
     if (isEmpty()) return other;
-    return new ConfigPath((String[]) ArrayUtils.add(segments, other.segments));
+    return new ConfigPath((String[]) ArrayUtils.addAll(segments, other.segments));
   }
 
   @CheckReturnValue
   public @NonNull ConfigPath add(String @NonNull [] other) {
     if (ArrayUtils.isEmpty(other)) return this;
     if (isEmpty()) return of(other);
-    return of((String[]) ArrayUtils.add(segments, other));
+    return of((String[]) ArrayUtils.addAll(segments, other));
   }
 
   @CheckReturnValue

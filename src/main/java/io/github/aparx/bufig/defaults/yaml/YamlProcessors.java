@@ -26,7 +26,8 @@ import java.util.regex.Pattern;
  * @since 1.0-SNAPSHOT
  */
 @UtilityClass
-public final class YamlProcessors {
+public final class
+YamlProcessors {
 
   public static final Pattern SCANNER_COMMENT_PATTERN =
       Pattern.compile("^(?<w> *)# ?(?<v>.+)$");

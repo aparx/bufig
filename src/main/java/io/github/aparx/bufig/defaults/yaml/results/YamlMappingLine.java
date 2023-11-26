@@ -9,6 +9,8 @@ import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.Objects;
+
 /**
  * @author aparx (Vinzent Z.)
  * @version 2023-11-21 12:26
@@ -46,6 +48,21 @@ public class YamlMappingLine extends ScannedLine {
         "nestDepth=" + nestDepth +
         ", key='" + key + '\'' +
         ", value='" + value + '\'' +
+        ", line='" + getLine() + '\'' +
         '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof YamlMappingLine)) return false;
+    if (!super.equals(o)) return false;
+    YamlMappingLine that = (YamlMappingLine) o;
+    return nestDepth == that.nestDepth && Objects.equals(key, that.key) && Objects.equals(value, that.value);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), nestDepth, key, value);
   }
 }

@@ -2,6 +2,7 @@ package io.github.aparx.bufig.configurable.field;
 
 import com.google.common.base.Defaults;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import io.github.aparx.bufig.ConfigPath;
 import io.github.aparx.bufig.configurable.Configurable;
 import io.github.aparx.bufig.configurable.ConfigurableValue;
@@ -15,11 +16,15 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A config field which contains a referenced member field, that is declared to be
@@ -39,6 +44,22 @@ import java.util.Optional;
 @Getter
 @Accessors(makeFinal = true)
 public class ConfigField<A extends Configurable> implements ConfigurableValue<A, Object> {
+
+  /** @deprecated This is experimental. Adding or removing mutators is not recommended yet. */
+  @Getter
+  @Deprecated
+  private static final Set<@NonNull ConfigFieldValueMutator> mutators = Sets.newHashSet(
+      ConfigFieldValueMutator.newMapper(AtomicReference.class, Object.class,
+          (field, ref) -> ref.get(), (field, val) -> new AtomicReference<>(val)),
+      ConfigFieldValueMutator.newMapper(WeakReference.class, Object.class,
+          (field, ref) -> ref.get(), (field, val) -> new WeakReference<>(val)),
+      ConfigFieldValueMutator.newMapper(ConfigurationSerializable.class, Map.class,
+          (field, value) -> value.serialize(), (field, value) -> {
+            //noinspection unchecked
+            return ConfigurationSerialization.deserializeObject((Map<String, ?>) value,
+                (Class<? extends ConfigurationSerializable>) field.getType());
+          })
+  );
 
   private final @NonNull Field field;
 
@@ -96,24 +117,25 @@ public class ConfigField<A extends Configurable> implements ConfigurableValue<A,
 
   @Override
   @SneakyThrows
-  @SuppressWarnings("unchecked")
   public void unsafeSet(A accessor, Object value) {
     if (value instanceof ConfigurationSection && Map.class.isAssignableFrom(getType()))
       unsafeSet(accessor, ((ConfigurationSection) value).getValues(false));
-    else if (!ConfigurationSerializable.class.isAssignableFrom(getType()))
-      writeSafely(accessor, value);
-    else if (value instanceof Map)
-      writeSafely(accessor, ConfigurationSerialization.deserializeObject(
-          (Map<String, ?>) value, (Class<? extends ConfigurationSerializable>) getType()));
-    else if (value instanceof ConfigurationSection)
+    else if (ConfigurationSerializable.class.isAssignableFrom(getType())
+        && value instanceof ConfigurationSection)
       unsafeSet(accessor, ((ConfigurationSection) value).getValues(false));
-    else
+    else {
+      for (ConfigFieldValueMutator mutator : getMutators())
+        value = mutator.write(accessor, this, value);
       writeSafely(accessor, value);
+    }
   }
 
   private Object read(@NonNull A accessor) throws IllegalAccessException {
     Preconditions.checkState(field.trySetAccessible());
-    return field.get(accessor);
+    Object value = field.get(accessor);
+    for (ConfigFieldValueMutator mutator : getMutators())
+      value = mutator.read(accessor, this, value);
+    return value;
   }
 
   private void write(@NonNull A accessor, Object value) throws IllegalAccessException {
