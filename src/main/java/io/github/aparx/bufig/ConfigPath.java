@@ -41,13 +41,7 @@ public final class ConfigPath implements Iterable<@NonNull String> {
 
   private static final ConfigPath EMPTY = new ConfigPath(ArrayUtils.EMPTY_STRING_ARRAY);
 
-  private static final String QUOTED_DEFAULT_SEPARATOR =
-      Pattern.quote(String.valueOf(DEFAULT_SEPARATOR));
-
   private final @NonNull String @NonNull [] segments;
-
-  /** Internal string caching the join using the default separator */
-  private String defaultSeparatorJoin;
 
   public static boolean isValidSegment(String segment) {
     return StringUtils.isNotBlank(segment);

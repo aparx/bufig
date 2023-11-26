@@ -212,7 +212,6 @@ public abstract class AbstractConfigSection implements ConfigSection {
 
   @Override
   public int getInt(@NonNull String path, int def) {
-    System.out.println("GET INT " + path + "/" + get(path));
     if (isRoot()) return getSection().getInt(path, def);
     return getRoot().getInt(ConfigPaths.parseConcatJoin(
         getPath(), path, getPathSeparator()), def);
